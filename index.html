@@ -180,7 +180,7 @@
             margin-bottom: 0.25rem; font-weight: 600; display: flex; align-items: center; gap: 4px;
         }
         
-        /* New Style for Text */
+        /* Style for Text */
         .screenshot-text {
             font-size: 0.85rem;
             color: var(--text-main);
@@ -342,9 +342,9 @@
 
         // --- SCANNER NAME MAPPING ---
         const scannerMap = {
-            'p1': 'Jigar sir',
-            'p2': "Drashti ma'am",
-            'p3': "vibhavi ma'am "
+            'p1': 'Jigar Raval',
+            'p2': 'Drashti Shah',
+            'p3': 'Vidhavi Bharwad'
         };
 
         // --- State ---
@@ -408,7 +408,7 @@
                         paymentType = 'free';
                     }
 
-                    // New: screen_short text (not image)
+                    // screen_short text
                     const screenShort = item.screen_short || item.screenshot_text || null;
 
                     return {
@@ -423,7 +423,7 @@
                         fee: fee,
                         paymentRaw: paymentRaw,
                         screenshot: item.screenshot || item.screenshot_url || item.payment_image || item.image || null,
-                        screen_short: screenShort, // Store text value
+                        screen_short: screenShort,
                         status: normalizeStatus(item.status),
                         paymentType: paymentType
                     };
@@ -559,11 +559,13 @@
                 let payBadgeClass = item.paymentType === 'online' ? 'pay-online' : (item.paymentType === 'cash' ? 'pay-cash' : (item.paymentType === 'free' ? 'pay-free' : 'neutral'));
                 let payText = item.paymentType.charAt(0).toUpperCase() + item.paymentType.slice(1);
 
-                // --- UPDATED LOGIC FOR SCREEN_SHORT ---
+                // --- FIXED LOGIC FOR SCREEN_SHORT ---
                 let screenshotHTML = '';
+                
+                // Only show this section if Payment Type is Online
                 if (item.paymentType === 'online') {
-                    if (item.screen_short) {
-                        // Show TEXT if screen_short exists
+                    // Priority 1: Check for Text
+                    if (item.screen_short && item.screen_short.trim() !== '') {
                         screenshotHTML = `
                             <div class="screenshot-area">
                                 <div class="screenshot-label">
@@ -573,8 +575,9 @@
                                 <div class="screenshot-text">${escapeHtml(item.screen_short)}</div>
                             </div>
                         `;
-                    } else if (item.screenshot) {
-                        // Fallback to IMAGE if text is missing
+                    } 
+                    // Priority 2: Check for Image (only if text is missing)
+                    else if (item.screenshot) {
                         screenshotHTML = `
                             <div class="screenshot-area">
                                 <div class="screenshot-label">
@@ -584,13 +587,8 @@
                                 <img src="${item.screenshot}" class="screenshot-img" alt="Payment Proof" onclick="window.open(this.src)">
                             </div>
                         `;
-                    } else {
-                        screenshotHTML = `
-                            <div class="screenshot-area">
-                                <div class="screenshot-label" style="color:#ef4444">No Info</div>
-                            </div>
-                        `;
                     }
+                    // Else: No text, no image. Render NOTHING (so no "No Info" box shows up)
                 }
 
                 const statusBadgeHTML = (item.status !== 'neutral') 
