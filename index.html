@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Celebration Days</title>
+
+    <!-- LIBRARIES -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- SUPABASE JS CLIENT -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --bg-dark: #0b0c10;
+            --panel-bg: #161821;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar-custom {
+            background: rgba(11, 12, 16, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #333;
+            padding: 15px 30px;
+        }
+
+        .brand-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+        .brand-title span { color: var(--neon-blue); }
+
+        .container-fluid { padding: 30px; }
+
+        /* Filter Section */
+        .filters-card {
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .form-select, .form-control {
+            background: #0b0c10;
+            border: 1px solid #444;
+            color: #fff;
+        }
+        .form-select:focus, .form-control:focus {
+            background: #0b0c10;
+            color: #fff;
+            border-color: var(--neon-purple);
+            box-shadow: none;
+        }
+
+        .btn-filter {
+            background: var(--neon-blue);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+        }
+        .btn-filter:hover { background: #fff; }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid #666;
+            color: #ccc;
+            padding: 8px 20px;
+            border-radius: 5px;
+        }
+        .btn-reset:hover { color: #fff; border-color: #fff; }
+
+        /* Table Styles */
+        .table-card {
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .table-dark-custom {
+            --bs-table-bg: transparent;
+            --bs-table-color: #fff;
+            border-color: #333;
+        }
+
+        .table-dark-custom th {
+            font-family: 'Orbitron';
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--neon-purple);
+            border-bottom: 2px solid #333;
+            padding: 15px;
+        }
+
+        .table-dark-custom td {
+            vertical-align: middle;
+            padding: 12px 15px;
+            border-bottom: 1px solid #222;
+        }
+
+        .table-dark-custom tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Badges */
+        .badge-online {
+            background: rgba(0, 243, 255, 0.2);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+        }
+        .badge-cash {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--neon-gold);
+            border: 1px solid var(--neon-gold);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0c10; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar-custom d-flex justify-content-between align-items-center">
+        <div class="brand-title">
+            KS <span>ADMIN</span> PANEL
+        </div>
+        <div>
+            <a href="index.html" class="btn btn-sm btn-outline-light" style="border-color:#444; color:#888;">
+                <i class="fas fa-home"></i> Go to Website
+            </a>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        
+        <!-- FILTERS -->
+        <div class="filters-card">
+            <h4 class="mb-4" style="font-family: 'Orbitron'; color: var(--neon-blue);">Filter Data</h4>
+            <div class="row g-3">
+                <!-- Year Filter -->
+                <div class="col-md-3">
+                    <label class="form-label text-muted">Select Year</label>
+                    <select id="filter-year" class="form-select">
+                        <option value="all">All Years</option>
+                        <!-- Years will be populated by JS -->
+                    </select>
+                </div>
+
+                <!-- Payment Mode Filter -->
+                <div class="col-md-3">
+                    <label class="form-label text-muted">Payment Mode</label>
+                    <select id="filter-payment" class="form-select">
+                        <option value="all">All Modes</option>
+                        <option value="online">Online (UPI)</option>
+                        <option value="cash">Cash (Hand)</option>
+                    </select>
+                </div>
+
+                <!-- Scanner Filter -->
+                <div class="col-md-3">
+                    <label class="form-label text-muted">Scanner QR</label>
+                    <select id="filter-scanner" class="form-select">
+                        <option value="all">All QRs</option>
+                        <option value="p1.jpeg">P1 (QR 1)</option>
+                        <option value="p2.png">P2 (QR 2)</option>
+                        <option value="p3.png">P3 (QR 3)</option>
+                    </select>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button onclick="applyFilters()" class="btn btn-filter flex-grow-1">Filter</button>
+                    <button onclick="resetFilters()" class="btn btn-reset">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="table-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="m-0" style="font-family: 'Orbitron'; color: #fff;">Registrations</h5>
+                <button onclick="downloadCSV()" class="btn btn-sm btn-success">
+                    <i class="fas fa-file-excel"></i> Download CSV
+                </button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-dark-custom align-middle" id="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Names</th>
+                            <th>Mobile</th>
+                            <th>Game</th>
+                            <th>Mode</th>
+                            <th>Scanner (QR)</th>
+                            <th>UPI/Txn ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Data will be loaded here -->
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                <i class="fas fa-spinner fa-spin"></i> Loading data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="no-data-msg" class="text-center py-4 text-muted" style="display: none;">
+                No registrations found matching filters.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const supabaseUrl = 'https://uttqltazlrfswyflwcnk.supabase.co'; 
+        const supabaseKey = 'sb_publishable_XxPs8fOVApejBKtliDvD4A_6-Z-7PPP';
+
+        let supabaseClient = null;
+        let allData = []; // Store all fetched data here
+        let currentData = []; // Store currently displayed data
+
+        // --- INITIALIZATION ---
+        window.addEventListener('load', async () => {
+            try {
+                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+                await fetchAllData();
+            } catch (e) {
+                console.error("Supabase Init Error:", e);
+                document.getElementById('table-body').innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error connecting to database. Check Console.</td></tr>`;
+            }
+        });
+
+        // --- FETCH DATA ---
+        async function fetchAllData() {
+            const { data, error } = await supabaseClient
+                .from('registrations')
+                .select('*')
+                .order('created_at', { ascending: false }); // Newest first
+
+            if (error) {
+                console.error("Fetch Error:", error);
+                return;
+            }
+
+            allData = data;
+            populateYearFilter(data);
+            applyFilters(); // Initial render shows all
+        }
+
+        // --- POPULATE YEAR DROPDOWN ---
+        function populateYearFilter(data) {
+            const years = new Set();
+            data.forEach(row => {
+                if(row.created_at) {
+                    years.add(new Date(row.created_at).getFullYear());
+                }
+            });
+            
+            const yearSelect = document.getElementById('filter-year');
+            // Keep "All Years" option
+            yearSelect.innerHTML = '<option value="all">All Years</option>';
+            
+            Array.from(years).sort().reverse().forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.innerText = year;
+                yearSelect.appendChild(option);
+            });
+        }
+
+        // --- FILTER LOGIC ---
+        function applyFilters() {
+            const yearFilter = document.getElementById('filter-year').value;
+            const paymentFilter = document.getElementById('filter-payment').value;
+            const scannerFilter = document.getElementById('filter-scanner').value;
+
+            // Start with all data
+            currentData = allData.filter(item => {
+                // 1. Filter Year
+                if (yearFilter !== 'all') {
+                    const itemYear = new Date(item.created_at).getFullYear();
+                    if (itemYear != yearFilter) return false;
+                }
+
+                // 2. Filter Payment
+                if (paymentFilter !== 'all') {
+                    if (item.payment_method !== paymentFilter) return false;
+                }
+
+                // 3. Filter Scanner
+                if (scannerFilter !== 'all') {
+                    if (item.scanner_name !== scannerFilter) return false;
+                }
+
+                return true;
+            });
+
+            renderTable(currentData);
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-year').value = 'all';
+            document.getElementById('filter-payment').value = 'all';
+            document.getElementById('filter-scanner').value = 'all';
+            applyFilters();
+        }
+
+        // --- RENDER TABLE ---
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            const noDataMsg = document.getElementById('no-data-msg');
+            const table = document.getElementById('data-table');
+
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                table.style.display = 'none';
+                noDataMsg.style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            noDataMsg.style.display = 'none';
+
+            data.forEach(row => {
+                // Format Date
+                const dateStr = row.created_at ? new Date(row.created_at).toLocaleString() : 'N/A';
+                
+                // Payment Badge
+                const paymentBadge = row.payment_method === 'online' 
+                    ? `<span class="badge badge-online">ONLINE</span>` 
+                    : `<span class="badge badge-cash">CASH</span>`;
+
+                // Clean Scanner Name
+                const scannerName = row.scanner_name || 'N/A';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="text-muted">#${row.id}</td>
+                    <td style="font-size:0.85rem;">${dateStr}</td>
+                    <td style="color:var(--neon-blue); font-weight:bold;">${row.full_name}</td>
+                    <td>${row.mobile}</td>
+                    <td>${row.game_uid}</td>
+                    <td>${paymentBadge}</td>
+                    <td>${scannerName}</td>
+                    <td style="font-size:0.9rem; color:#aaa;">${row.upi_id || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- EXPORT TO CSV ---
+        function downloadCSV() {
+            if (currentData.length === 0) {
+                alert("No data to download.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            // Header
+            csvContent += "ID,Date,Names,Mobile,Game UID,Email,Payment Method,Scanner,UPI ID\n";
+
+            // Rows
+            currentData.forEach(row => {
+                const dateStr = row.created_at ? new Date(row.created_at).toLocaleString() : '';
+                // Escape commas in names to prevent CSV breaking
+                const safeName = row.full_name.replace(/,/g, ' '); 
+                
+                let rowStr = `${row.id},"${dateStr}","${safeName}",${row.mobile},${row.game_uid},${row.email},${row.payment_method},${row.scanner_name},${row.upi_id}`;
+                csvContent += rowStr + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "registrations_data.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
