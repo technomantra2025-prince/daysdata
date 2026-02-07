@@ -13,7 +13,7 @@
     
     <style>
         :root {
-            /* Light Theme */
+            /* Light Theme Only */
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
             --text-main: #0f172a;
@@ -36,28 +36,6 @@
             --stat-bg: #eff6ff; --stat-text: #1e3a8a;
         }
 
-        [data-theme="dark"] {
-            /* Dark Theme */
-            --bg-body: #0f172a;
-            --bg-card: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #3b82f6;
-            --primary-hover: #60a5fa;
-            --border: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-            
-            --status-ok-bg: #052e16; --status-ok-text: #4ade80;
-            --status-bad-bg: #450a0a; --status-bad-text: #f87171;
-            --status-neutral-bg: #334155; --status-neutral-text: #cbd5e1;
-            
-            --pay-online-bg: #172554; --pay-online-text: #60a5fa;
-            --pay-cash-bg: #422006; --pay-cash-text: #fde047;
-            --pay-free-bg: #1f2937; --pay-free-text: #9ca3af;
-            
-            --stat-bg: #1e293b; --stat-text: #93c5fd;
-        }
-
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
         
         body {
@@ -76,7 +54,7 @@
             border-bottom: 1px solid var(--border);
             padding: 1rem 1.5rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             position: sticky;
             top: 0;
@@ -84,10 +62,6 @@
             box-shadow: var(--shadow);
         }
         .brand { font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-        .theme-toggle {
-            background: none; border: 1px solid var(--border); border-radius: 9999px;
-            padding: 0.5rem; cursor: pointer; color: var(--text-main);
-        }
 
         /* --- Controls Section --- */
         .controls-wrapper {
@@ -205,6 +179,18 @@
             font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted);
             margin-bottom: 0.25rem; font-weight: 600; display: flex; align-items: center; gap: 4px;
         }
+        
+        /* New Style for Text */
+        .screenshot-text {
+            font-size: 0.85rem;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            word-break: break-all;
+        }
+
         .screenshot-img {
             width: 100%;
             height: 120px;
@@ -261,15 +247,12 @@
 </head>
 <body>
 
+    <!-- Header -->
     <header>
         <div class="brand">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
             <span>GamePortal</span>
         </div>
-        <button class="theme-toggle" id="themeBtn" aria-label="Toggle Theme">
-            <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            <svg id="iconMoon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-        </button>
     </header>
 
     <div class="controls-wrapper">
@@ -357,11 +340,11 @@
             'STUDENT OF THE YEAR': "50/per person"
         };
 
-        // --- SCANNER NAME MAPPING (Updated to handle extensions) ---
+        // --- SCANNER NAME MAPPING ---
         const scannerMap = {
-            'p1': 'Jigar Raval',
-            'p2': 'Drashti Shah',
-            'p3': 'Vidhavi Bharwad'
+            'p1': 'Jigar sir',
+            'p2': "Drashti ma'am",
+            'p3': "vibhavi ma'am "
         };
 
         // --- State ---
@@ -378,13 +361,11 @@
         const scannerFilterSelect = document.getElementById('scannerFilter');
         const statsSection = document.getElementById('statsSection');
         const statsGrid = document.getElementById('statsGrid');
-        const themeBtn = document.getElementById('themeBtn');
         const statusBtns = document.querySelectorAll('#statusFilters .tab-btn');
         const paymentBtns = document.querySelectorAll('#paymentFilters .tab-btn');
 
         // --- Init ---
         document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
             fetchRegistrations();
         });
 
@@ -411,8 +392,6 @@
 
                     // Map Scanner Name
                     const scannerRaw = item.scanner_name || item.scanner || 'Unknown';
-                    
-                    // FIX: Handle extensions like .jpeg, .png in mapping
                     const lookupKey = scannerRaw.toLowerCase().replace(/\.(jpg|jpeg|png|webp)$/i, '');
                     const scannerName = scannerMap[lookupKey] || scannerRaw;
 
@@ -425,10 +404,12 @@
                     const paymentRaw = item.payment_method || item.payment || 'Unknown';
                     let paymentType = normalizePayment(paymentRaw);
                     
-                    // If fee is "Free", force paymentType to "free"
                     if (fee === 'Free') {
                         paymentType = 'free';
                     }
+
+                    // New: screen_short text (not image)
+                    const screenShort = item.screen_short || item.screenshot_text || null;
 
                     return {
                         id: item.id,
@@ -438,10 +419,11 @@
                         phone: item.phone || item.mobile || 'N/A',
                         gameName: rawGameName || 'Unknown Game',
                         scannerName: scannerName,
-                        scannerRaw: scannerRaw, // Save raw value for filter display
+                        scannerRaw: scannerRaw,
                         fee: fee,
                         paymentRaw: paymentRaw,
                         screenshot: item.screenshot || item.screenshot_url || item.payment_image || item.image || null,
+                        screen_short: screenShort, // Store text value
                         status: normalizeStatus(item.status),
                         paymentType: paymentType
                     };
@@ -457,7 +439,7 @@
         }
 
         function populateDynamicFilters() {
-            // 1. Games (Standard)
+            // 1. Games
             const gamesSet = new Set(allData.map(d => d.gameName).filter(n => n && n !== 'Unknown Game'));
             const uniqueGames = Array.from(gamesSet).sort();
 
@@ -468,30 +450,24 @@
                 gameFilterSelect.appendChild(opt);
             });
 
-            // 2. Scanners (Updated Logic)
-            // We need a map: "Jigar Raval" -> "p1" (to show in dropdown)
+            // 2. Scanners
             const scannerMapDisplay = {};
             
             allData.forEach(item => {
-                // If we haven't seen this mapped name yet, store the raw value
                 if (!scannerMapDisplay[item.scannerName] && item.scannerName !== 'Unknown') {
                     scannerMapDisplay[item.scannerName] = item.scannerRaw;
                 }
             });
 
             scannerFilterSelect.length = 1;
-            
-            // Sort keys alphabetically
             const sortedNames = Object.keys(scannerMapDisplay).sort();
             
             sortedNames.forEach(name => {
                 const rawCode = scannerMapDisplay[name];
-                // Clean extension for display (e.g. p1.jpeg -> p1)
                 const displayCode = rawCode.replace(/\.(jpg|jpeg|png|webp)$/i, '').toUpperCase();
                 
                 const opt = document.createElement('option');
-                opt.value = name; // Value remains the mapped name for filtering logic
-                // Text shows "P1 - Jigar Raval"
+                opt.value = name; 
                 opt.textContent = `${displayCode} - ${name}`;
                 scannerFilterSelect.appendChild(opt);
             });
@@ -525,7 +501,6 @@
                 const matchesStatus = currentStatusFilter === 'all' || item.status === currentStatusFilter;
                 const matchesPayment = currentPaymentFilter === 'all' || item.paymentType === currentPaymentFilter;
                 const matchesGame = currentGameFilter === 'all' || item.gameName === currentGameFilter;
-                // Filter logic uses the mapped name (value)
                 const matchesScanner = currentScannerFilter === 'all' || item.scannerName === currentScannerFilter;
 
                 return matchesSearch && matchesStatus && matchesPayment && matchesGame && matchesScanner;
@@ -543,16 +518,14 @@
             statsSection.style.display = 'block';
             statsGrid.innerHTML = '';
 
-            // Total Participants
             const totalCard = document.createElement('div');
             totalCard.className = 'stat-card';
             totalCard.innerHTML = `
                 <div class="stat-number">${items.length}</div>
-                <div class="stat-label">Total Reg.</div>
+                <div class="stat-label">Total Reg</div>
             `;
             statsGrid.appendChild(totalCard);
 
-            // Game Breakdown
             const gameCounts = {};
             items.forEach(item => {
                 gameCounts[item.gameName] = (gameCounts[item.gameName] || 0) + 1;
@@ -581,15 +554,27 @@
 
             items.forEach(item => {
                 let statusBadgeClass = item.status === 'ok' ? 'ok' : (item.status === 'bad' ? 'bad' : 'neutral');
-                let statusText = item.status === 'neutral' ? 'Pending' : item.status;
+                let statusText = item.status === 'neutral' ? '' : item.status;
 
                 let payBadgeClass = item.paymentType === 'online' ? 'pay-online' : (item.paymentType === 'cash' ? 'pay-cash' : (item.paymentType === 'free' ? 'pay-free' : 'neutral'));
                 let payText = item.paymentType.charAt(0).toUpperCase() + item.paymentType.slice(1);
 
-                // Screenshot Logic
+                // --- UPDATED LOGIC FOR SCREEN_SHORT ---
                 let screenshotHTML = '';
                 if (item.paymentType === 'online') {
-                    if (item.screenshot) {
+                    if (item.screen_short) {
+                        // Show TEXT if screen_short exists
+                        screenshotHTML = `
+                            <div class="screenshot-area">
+                                <div class="screenshot-label">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                    Payment Info
+                                </div>
+                                <div class="screenshot-text">${escapeHtml(item.screen_short)}</div>
+                            </div>
+                        `;
+                    } else if (item.screenshot) {
+                        // Fallback to IMAGE if text is missing
                         screenshotHTML = `
                             <div class="screenshot-area">
                                 <div class="screenshot-label">
@@ -600,13 +585,17 @@
                             </div>
                         `;
                     } else {
-                         screenshotHTML = `
+                        screenshotHTML = `
                             <div class="screenshot-area">
-                                <div class="screenshot-label" style="color:#ef4444">No Screenshot</div>
+                                <div class="screenshot-label" style="color:#ef4444">No Info</div>
                             </div>
                         `;
                     }
                 }
+
+                const statusBadgeHTML = (item.status !== 'neutral') 
+                    ? `<span class="badge ${statusBadgeClass}">${statusText}</span>`
+                    : '';
 
                 const card = document.createElement('div');
                 card.className = 'card';
@@ -636,7 +625,7 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <span class="badge ${statusBadgeClass}">${statusText}</span>
+                        ${statusBadgeHTML}
                         <span class="badge ${payBadgeClass}">${payText}</span>
                     </div>
                 `;
@@ -648,17 +637,6 @@
         function escapeHtml(text) { return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
 
         // --- Events ---
-        function initTheme() {
-            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            setTheme(isDark);
-            themeBtn.addEventListener('click', () => setTheme(!document.body.hasAttribute('data-theme')));
-        }
-        function setTheme(isDark) {
-            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            document.getElementById('iconSun').style.display = isDark ? 'block' : 'none';
-            document.getElementById('iconMoon').style.display = isDark ? 'none' : 'block';
-        }
-
         searchInput.addEventListener('input', applyFilters);
         gameFilterSelect.addEventListener('change', (e) => { currentGameFilter = e.target.value; applyFilters(); });
         scannerFilterSelect.addEventListener('change', (e) => { currentScannerFilter = e.target.value; applyFilters(); });
